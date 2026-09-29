@@ -1,0 +1,17 @@
+diff --git a/include/mcp_server.h b/include/mcp_server.h
+index e5339cb..ad01a14 100644
+--- a/include/mcp_server.h
++++ b/include/mcp_server.h
+@@ -390,6 +390,12 @@ public:
+      */
+     bool set_mount_point(const std::string& mount_point, const std::string& dir, httplib::Headers headers = httplib::Headers());
+ 
++    /**
++     * @brief Get the underlying HTTP server
++     * @return The HTTP server serving the MCP endpoints
++     */
++    httplib::Server* http() { return http_server_.get(); }
++
+ private:
+     std::string host_;
+     int port_;

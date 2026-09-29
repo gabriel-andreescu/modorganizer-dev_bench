@@ -1,0 +1,1074 @@
+{
+  "tools": [
+    {
+      "name": "inspect",
+      "description": "Read MO2 process identity, health and connection setup. Health is answered without waiting for the UI.",
+      "readOnly": false,
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "type": "string",
+            "enum": [
+              "health",
+              "bridge"
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "mods",
+      "description": "List and inspect mods, metadata, native conflict flags and separators, and change enablement, ordering, categories or metadata. list/get include conflicts.redundant, flags and native tooltip. Optional conflict filters list by one flag. Flags mirror MO2 cached classification: after file hide/unhide, close the editor and use settings refresh before checking flags. remove schedules native confirmation: answer through dialogs and poll operationStatus for the removed result. manage opens native mod information. editorState discovers category IDs, editorUpdate writes notes/comments/category assignments/primary category immediately, and closeEditor finishes and saves. setIgnoreUpdate invokes the currently available native update action. These menu operations require the mod to pass current list filters. filters discovers native text/criteria/mode/grouping/separator settings, setFilters takes filter and clearFilters invokes native text/criteria reset. Poll operationStatus for native operation outcomes.",
+      "readOnly": false,
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "mod or separator name. create/createSeparator: the new name"
+          },
+          "enabled": {
+            "type": "boolean",
+            "description": "setEnabled: enable the mod. setIgnoreUpdate: ignore its update"
+          },
+          "priority": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "setPriority: zero-based position in the mod list"
+          },
+          "separator": {
+            "type": "string",
+            "description": "move: place the mod immediately after this separator"
+          },
+          "newName": {
+            "type": "string",
+            "description": "rename: the new name"
+          },
+          "category": {
+            "type": "string",
+            "description": "addCategory/removeCategory: category name"
+          },
+          "conflict": {
+            "type": "string",
+            "enum": [
+              "overwritesLoose",
+              "overwrittenLoose",
+              "mixedLoose",
+              "redundant",
+              "looseOverwritesArchive",
+              "archiveOverwrittenByLoose",
+              "overwritesArchive",
+              "overwrittenArchive",
+              "mixedArchive"
+            ],
+            "description": "list: only mods with this native conflict flag, including redundant"
+          },
+          "filter": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "text": {
+                "type": "string"
+              },
+              "grouping": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "separators": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "mode": {
+                "type": "string",
+                "enum": [
+                  "all",
+                  "any"
+                ]
+              },
+              "criteria": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "index",
+                    "state"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "index": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "state": {
+                      "type": "string",
+                      "enum": [
+                        "inactive",
+                        "include",
+                        "exclude"
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            "description": "setFilters: text, mode, grouping, separators and criteria"
+          },
+          "values": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "version": {
+                "type": "string"
+              },
+              "comments": {
+                "type": "string"
+              },
+              "notes": {
+                "type": "string",
+                "description": "editorUpdate: HTML notes"
+              },
+              "primaryCategory": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "editorUpdate: an assigned category ID"
+              },
+              "categories": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "assigned"
+                  ],
+                  "additionalProperties": false,
+                  "properties": {
+                    "id": {
+                      "type": "integer",
+                      "minimum": 0
+                    },
+                    "assigned": {
+                      "type": "boolean"
+                    }
+                  }
+                },
+                "description": "editorUpdate: ordered changes"
+              },
+              "newestVersion": {
+                "type": "string"
+              },
+              "nexusId": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "game": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string"
+              },
+              "installationFile": {
+                "type": "string"
+              }
+            },
+            "description": "metadata/editorUpdate: fields to write"
+          },
+          "action": {
+            "type": "string",
+            "enum": [
+              "list",
+              "get",
+              "separators",
+              "filters",
+              "setFilters",
+              "clearFilters",
+              "create",
+              "createSeparator",
+              "setEnabled",
+              "setPriority",
+              "move",
+              "rename",
+              "remove",
+              "metadata",
+              "manage",
+              "editorState",
+              "editorUpdate",
+              "closeEditor",
+              "setIgnoreUpdate",
+              "operationStatus",
+              "addCategory",
+              "removeCategory"
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "categories",
+      "description": "Manage native category definitions, hierarchy, order and Nexus mappings. list opens a snapshot and closes without applying. Use editorState for open edits. Other actions stage edits until accept, and cancel discards them. All operations are scheduled: poll operationStatus. Targets use row from editorState because category IDs can repeat, and edits return fresh row positions. setOrder takes all rows and setMappings takes Nexus ids. Changing/removing IDs follows MO2's native category behavior, including existing mod assignments.",
+      "readOnly": false,
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "row": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "update/remove/setMappings: row position from the latest editor response"
+          },
+          "rows": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "uniqueItems": true,
+            "description": "setOrder: every current row position once, in the requested order"
+          },
+          "ids": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "uniqueItems": true,
+            "description": "setMappings: Nexus category IDs from nexusCategories"
+          },
+          "values": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "name": {
+                "type": "string"
+              },
+              "parentId": {
+                "type": "integer",
+                "minimum": 0
+              }
+            },
+            "description": "create/update: id, name and parentId (0 for a root category)"
+          },
+          "action": {
+            "type": "string",
+            "enum": [
+              "list",
+              "manage",
+              "editorState",
+              "create",
+              "update",
+              "remove",
+              "setOrder",
+              "setMappings",
+              "accept",
+              "cancel",
+              "operationStatus"
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "conflicts",
+      "description": "Inspect per-mod file conflicts, providers and physical files, and hide or unhide files through MO2's native editors. inspect takes mods (exact names) and/or modFilter (name substring), and omitting both inspects the mod list. It schedules native snapshots: poll operationStatus. Snapshots exclude unique files by default, temporarily clear mod-list filters and restore them after closing their editors. list inspects the currently open native editor after mods manage. directory lists physical mod files including .mohidden. hideFiles/unhide use the native file tree on paths, including directories. archive identifies entries supplied by an archive, and provider text is MO2's native display. inspect also returns a structured providers array, winner first. files info/resolve queries providers directly. hide and preview select paths from this view and invoke native actions, so answer dialogs and poll operationStatus. Archive parsing in settings workarounds is required for archive members to appear.",
+      "readOnly": false,
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "mods": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "inspect: exact mod names"
+          },
+          "modFilter": {
+            "type": "string",
+            "description": "inspect: mod name substring"
+          },
+          "modOffset": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "inspect: first mod to return (default 0)"
+          },
+          "modLimit": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "inspect: mods to return (default 10)"
+          },
+          "path": {
+            "type": "string",
+            "description": "directory: relative folder inside the mod"
+          },
+          "view": {
+            "type": "string",
+            "enum": [
+              "advanced",
+              "winning",
+              "losing",
+              "unique"
+            ],
+            "description": "inspect/list: native conflict view (default advanced)"
+          },
+          "filter": {
+            "type": "string",
+            "description": "inspect/list: native file filter text"
+          },
+          "offset": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "inspect/list: first file per mod (default 0)"
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "inspect/list: files per mod (default 100)"
+          },
+          "paths": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "string"
+            },
+            "description": "hide/preview: paths from list. hideFiles/unhide: relative paths from directory"
+          },
+          "options": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "includeUnique": {
+                "type": "boolean"
+              },
+              "allProviders": {
+                "type": "boolean"
+              }
+            },
+            "description": "inspect/list: advanced view unique-file and provider display"
+          },
+          "action": {
+            "type": "string",
+            "enum": [
+              "inspect",
+              "list",
+              "directory",
+              "hide",
+              "hideFiles",
+              "unhide",
+              "preview",
+              "operationStatus"
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "plugins",
+      "description": "Read the entire plugin order including disabled plugins, masters, origin and flags, and enable plugins or change ordering.",
+      "readOnly": false,
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "setEnabled/setPriority: plugin filename"
+          },
+          "enabled": {
+            "type": "boolean",
+            "description": "setEnabled: enable the plugin"
+          },
+          "priority": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "setPriority: zero-based position in the full plugin list"
+          },
+          "names": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "setLoadOrder: every current plugin exactly once, in the new order"
+          },
+          "action": {
+            "type": "string",
+            "enum": [
+              "list",
+              "setEnabled",
+              "setPriority",
+              "setLoadOrder"
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "executables",
+      "description": "Read/launch executables and manage every native editor field/order. list includes an INI snapshot that may lag live changes. snapshot reads current live configuration with the editor closed. Native operations are scheduled: poll operationStatus and inspect dialogs. Apply/accept commits live edits and cancel discards unapplied changes. libraries/setLibraries validate live titles with the editor closed.",
+      "readOnly": false,
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "configured title. launch: title or executable path"
+          },
+          "args": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "launch: command-line arguments"
+          },
+          "cwd": {
+            "type": "string",
+            "description": "launch: working directory"
+          },
+          "profile": {
+            "type": "string",
+            "description": "launch: profile to run with (default the active profile)"
+          },
+          "overwrite": {
+            "type": "string",
+            "description": "launch: mod that receives new files instead of Overwrite"
+          },
+          "names": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "setOrder: every editor title exactly once, in the new order"
+          },
+          "enabled": {
+            "type": "boolean",
+            "description": "setLibraries: overall force-load state"
+          },
+          "values": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "title": {
+                "type": "string"
+              },
+              "binary": {
+                "type": "string"
+              },
+              "workingDirectory": {
+                "type": "string"
+              },
+              "arguments": {
+                "type": "string"
+              },
+              "steamAppID": {
+                "type": "string"
+              },
+              "overwriteSteamAppID": {
+                "type": "boolean"
+              },
+              "createFilesInMod": {
+                "type": "boolean"
+              },
+              "outputMod": {
+                "type": "string"
+              },
+              "forceLoadLibraries": {
+                "type": "boolean"
+              },
+              "useApplicationIcon": {
+                "type": "boolean"
+              },
+              "minimizeToSystemTray": {
+                "type": "boolean",
+                "description": "MO2 2.5.3beta12 only"
+              },
+              "hide": {
+                "type": "boolean"
+              }
+            },
+            "description": "update: editor fields to change"
+          },
+          "libraries": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "process",
+                "library",
+                "enabled"
+              ],
+              "properties": {
+                "process": {
+                  "type": "string"
+                },
+                "library": {
+                  "type": "string"
+                },
+                "enabled": {
+                  "type": "boolean"
+                }
+              }
+            },
+            "description": "setLibraries: replacement {process, library, enabled} rows"
+          },
+          "action": {
+            "type": "string",
+            "enum": [
+              "list",
+              "launch",
+              "status",
+              "manage",
+              "editorState",
+              "snapshot",
+              "create",
+              "clone",
+              "addFromFile",
+              "update",
+              "remove",
+              "setOrder",
+              "reset",
+              "apply",
+              "accept",
+              "cancel",
+              "configureLibraries",
+              "operationStatus",
+              "libraries",
+              "setLibraries"
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "downloads",
+      "description": "List downloaded archives with metadata, start URL/Nexus downloads or resolve download IDs.",
+      "readOnly": false,
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "urls": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "start: URLs to download"
+          },
+          "modId": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "nexus: Nexus mod ID"
+          },
+          "fileId": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "nexus: Nexus file ID"
+          },
+          "id": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "path: download manager ID from list"
+          },
+          "action": {
+            "type": "string",
+            "enum": [
+              "list",
+              "start",
+              "nexus",
+              "path"
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "nexus",
+      "description": "Retrieve full Nexus mod details including description through MO2's authenticated Nexus integration, or file details/download URLs. Network actions return requestId. Poll status for the complete response or failure. cached reads installed meta.ini, live mod metadata and previous responses.",
+      "readOnly": true,
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "installed mod whose Nexus IDs to use. cached: required"
+          },
+          "game": {
+            "type": "string",
+            "description": "Nexus game name when not using name (default the managed game)"
+          },
+          "modId": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Nexus mod ID when not using name"
+          },
+          "fileId": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "fileInfo/downloadUrls: Nexus file ID"
+          },
+          "requestId": {
+            "type": "string",
+            "description": "status: request to poll. Omit to list this session's requests"
+          },
+          "action": {
+            "type": "string",
+            "enum": [
+              "description",
+              "fileInfo",
+              "downloadUrls",
+              "status",
+              "cached"
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "install",
+      "description": "Start MO2's native archive installer from an absolute path or downloads filename. Returns a session. Poll status and use dialogs to read/answer FOMOD pages, then verify completed status. Optional separator determines final placement.",
+      "readOnly": false,
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "start: absolute archive path"
+          },
+          "download": {
+            "type": "string",
+            "description": "start: archive filename from downloads list"
+          },
+          "name": {
+            "type": "string",
+            "description": "start: suggested mod name"
+          },
+          "separator": {
+            "type": "string",
+            "description": "start: place the installed mod after this separator"
+          },
+          "action": {
+            "type": "string",
+            "enum": [
+              "start",
+              "status"
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "dialogs",
+      "description": "Inspect native dialogs including FOMOD pages, descriptions, images and choices. Use returned IDs to click, toggle, edit, set values, select or cancel, and re-describe after changes. File dialogs expose fileSelection. selectFile takes the dialog id and path, then accept schedules native validation and completion.",
+      "readOnly": false,
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "control ID from describe. selectFile/accept/cancel: dialog ID"
+          },
+          "checked": {
+            "type": "boolean",
+            "description": "setChecked: checked state"
+          },
+          "text": {
+            "type": "string",
+            "description": "setText: text to enter"
+          },
+          "path": {
+            "type": "string",
+            "description": "selectFile: file to select"
+          },
+          "index": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "select: zero-based item index"
+          },
+          "value": {
+            "description": "setValue: boolean, number, choice text or text matching the control. scroll: absolute position"
+          },
+          "filter": {
+            "type": "string",
+            "description": "choices: match group names, option text or descriptions"
+          },
+          "action": {
+            "type": "string",
+            "enum": [
+              "describe",
+              "choices",
+              "click",
+              "setChecked",
+              "setText",
+              "setValue",
+              "select",
+              "selectFile",
+              "accept",
+              "cancel",
+              "reveal",
+              "scroll"
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "capture",
+      "description": "Capture an image and return its file path, correlation metadata and the image. kind='auto' uses the sole registered capture provider. With none it returns 404 unless allowNative is true, and with several it returns 400. kind='native' captures an MO2 window (the main window unless window is given) and always includes UI. kind='windows' lists this process's visible windows. kind='providers' lists provider keys and kind='extensions' their descriptors. Captures other than listings require checkpointId. A successful golden comparison adds {ssim,threshold,passed,regions?}, and a missing, unreadable or incompatible golden adds {goldenError}. A scene mismatch or degraded capture makes the comparison inconclusive.",
+      "readOnly": false,
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "description": "auto (default) | native | windows | providers | extensions | a registered provider key",
+            "enum": [
+              "auto",
+              "native",
+              "windows",
+              "providers",
+              "extensions"
+            ]
+          },
+          "checkpointId": {
+            "type": "string",
+            "description": "stable file stem and correlation key, required for captures"
+          },
+          "recording": {
+            "type": "string",
+            "description": "recording name, for correlation (default 'adhoc')"
+          },
+          "variant": {
+            "type": "string",
+            "description": "variant under test, for correlation (default 'default')"
+          },
+          "window": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "native: window id from kind=windows (default the main window)"
+          },
+          "allowNative": {
+            "type": "boolean",
+            "description": "auto: fall back to native when no provider is registered (default false)"
+          },
+          "excludeUi": {
+            "type": "boolean",
+            "description": "request a capture without UI. native cannot honor it (default true)"
+          },
+          "outDir": {
+            "type": "string",
+            "description": "override the capture directory"
+          },
+          "timeoutMs": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "provider: how long to wait for the image (default 8000)"
+          },
+          "pollMs": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "provider: poll interval while waiting (default 100)"
+          },
+          "runId": {
+            "type": "string",
+            "description": "correlation ID copied to the result and request ID"
+          },
+          "repeat": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "repeat index, appended to the file stem as `__r<repeat>`"
+          },
+          "sceneMismatch": {
+            "type": "boolean",
+            "description": "mark the capture inconclusive because the scene differs (default false)"
+          },
+          "subrect": {
+            "type": "object",
+            "description": "provider: capture rectangle {x,y,w,h} in 0..1 UV"
+          },
+          "golden": {
+            "type": "string",
+            "description": "path to a reference image to SSIM-compare against (absolute, or relative to the MO2 install). Adds {ssim,threshold,passed} to the result"
+          },
+          "threshold": {
+            "type": "number",
+            "description": "golden: SSIM >= threshold passes (default 0.98)"
+          },
+          "regions": {
+            "type": "array",
+            "description": "golden: [{name,x,y,w,h,threshold?}] in 0..1 UV, scored independently. Passes only if every region passes"
+          }
+        }
+      }
+    },
+    {
+      "name": "ui",
+      "description": "Discover native MO2 window actions and trigger an enabled action by its returned ID. Inspect dialogs after triggering actions that open a window.",
+      "readOnly": false,
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "trigger: action ID from list"
+          },
+          "action": {
+            "type": "string",
+            "enum": [
+              "list",
+              "trigger"
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "profiles",
+      "description": "Read/select profiles or open native create/copy/rename/remove/settings/save-transfer workflows. Mutations are scheduled, so inspect operationStatus and dialogs for name entry, confirmation, character selection and completion. name selects the source profile, and enabled controls local save/INI settings.",
+      "readOnly": false,
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "profile to select, copy, rename, remove, configure or transfer saves for"
+          },
+          "enabled": {
+            "type": "boolean",
+            "description": "setLocalSaves/setLocalSettings: use profile-local saves or INIs"
+          },
+          "action": {
+            "type": "string",
+            "enum": [
+              "list",
+              "select",
+              "manage",
+              "create",
+              "copy",
+              "rename",
+              "remove",
+              "setLocalSaves",
+              "setLocalSettings",
+              "transferSaves",
+              "operationStatus"
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "files",
+      "description": "Find virtual files, list virtual directories, or resolve a file. info returns one directory of virtual files with virtual path, MO2 resolvedPath, winner archive and structured origins in native order (winner first). Optional filters match filenames, and offset/limit page info (default 100). Archive members require MO2 archive parsing. Their resolvedPath can be a virtual location inside the mod, not a loose file.",
+      "readOnly": false,
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "path": {
+            "type": "string",
+            "description": "virtual path. resolve: a file. Other actions: a directory"
+          },
+          "filters": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "find/info: filename globs"
+          },
+          "offset": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "info: first file (default 0)"
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "info: files to return (default 100)"
+          },
+          "action": {
+            "type": "string",
+            "enum": [
+              "find",
+              "directories",
+              "resolve",
+              "info"
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "settings",
+      "description": "Root list discovers MO2 settings sections. Native section get/set opens the corresponding editor, and set values maps discovered control objectNames to values. Poll operationStatus, then apply or cancel. Native confirmations, restart and refresh remain observable. Section plugins list discovers plugins/keys, get/set uses plugin and key with value for immediate live edits. manage can open any native section, including the Plugins tab.",
+      "readOnly": false,
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "plugin": {
+            "type": "string",
+            "description": "section plugins: plugin name"
+          },
+          "key": {
+            "type": "string",
+            "description": "section plugins get/set: setting key"
+          },
+          "value": {
+            "description": "section plugins set: new JSON value"
+          },
+          "section": {
+            "type": "string",
+            "enum": [
+              "general",
+              "theme",
+              "modList",
+              "paths",
+              "nexus",
+              "plugins",
+              "workarounds",
+              "diagnostics"
+            ],
+            "description": "settings section. Omit with list to discover them"
+          },
+          "values": {
+            "type": "object",
+            "description": "native section set: control objectName to value"
+          },
+          "action": {
+            "type": "string",
+            "enum": [
+              "list",
+              "get",
+              "set",
+              "refresh",
+              "manage",
+              "apply",
+              "cancel",
+              "operationStatus"
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "logs",
+      "description": "List log sources/files without their contents, or read one source's last lines. read defaults to this process's live log and 10 lines. lines accepts any nonnegative count with no configured maximum. The file source requires a filename from list.",
+      "readOnly": true,
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "source": {
+            "type": "string",
+            "enum": [
+              "live",
+              "file"
+            ],
+            "description": "read: log source (default live)"
+          },
+          "file": {
+            "type": "string",
+            "description": "read with source file: filename from list"
+          },
+          "lines": {
+            "type": "integer",
+            "minimum": 0,
+            "default": 10,
+            "description": "read: last lines to return"
+          },
+          "action": {
+            "type": "string",
+            "enum": [
+              "list",
+              "read"
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "events",
+      "description": "Read semantic MO2 events after a sequence number, optionally waiting for new events.",
+      "readOnly": true,
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "since": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "return events after this sequence number (default 0)"
+          },
+          "timeoutMs": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "wait: how long to wait for a new event"
+          },
+          "action": {
+            "type": "string",
+            "enum": [
+              "poll",
+              "wait"
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "scenario",
+      "description": "Run registered tools sequentially, or wait for an event topic. Returns per-step data and errors. An installation step returns its session. Interact with dialogs in subsequent calls.",
+      "readOnly": false,
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "steps": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "tool": {
+                  "type": "string"
+                },
+                "args": {
+                  "type": "object"
+                },
+                "waitFor": {
+                  "type": "string"
+                },
+                "timeoutMs": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "additionalProperties": false
+            },
+            "description": "run: {tool, args} calls or {waitFor, timeoutMs} event waits"
+          },
+          "continueOnError": {
+            "type": "boolean",
+            "description": "run: continue after a failed step (default false)"
+          },
+          "action": {
+            "type": "string",
+            "enum": [
+              "run"
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  ]
+}

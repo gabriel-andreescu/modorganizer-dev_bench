@@ -1,0 +1,7 @@
+* text=auto eol=lf
+
+*.dll binary -eol
+*.exe binary -eol
+*.pdb binary -eol
+*.png binary -eol
+*.qm binary -eol

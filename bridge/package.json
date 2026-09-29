@@ -1,0 +1,26 @@
+{
+  "name": "modorganizer-dev-bench-bridge",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc --noEmit",
+    "compile": "bun build --compile --target=bun-windows-x64 --outfile dist/dev-bench-bridge.exe src/index.ts && license-checker-rseidelsohn --production --excludePrivatePackages --plainVertical --out dist/THIRD-PARTY-NOTICES.txt",
+    "lint": "eslint .",
+    "test": "node --import tsx --test test/*.test.ts"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.30.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^22.10.0",
+    "bun": "1.4.2",
+    "eslint": "^10.9.1",
+    "license-checker-rseidelsohn": "5.0.1",
+    "prettier": "3.9.7",
+    "tsx": "^4.20.0",
+    "typescript": "^5.7.0",
+    "typescript-eslint": "^8.69.0"
+  }
+}

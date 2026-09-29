@@ -1,0 +1,7 @@
+.xmake/
+build/
+dist/
+scratch/
+.copier-answers.yml
+node_modules/
+bridge/src/tools-fallback.json

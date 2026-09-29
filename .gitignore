@@ -1,0 +1,10 @@
+.xmake/
+.mopk/
+build/
+dist/
+.idea/
+scratch/
+compile_commands.json
+aqtinstall.log
+node_modules/
+__pycache__/

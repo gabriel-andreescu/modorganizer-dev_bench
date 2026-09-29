@@ -1,0 +1,40 @@
+{
+    __meta__ = {
+        version = "1.0"
+    },
+    ["windows|x64"] = {
+        ["aqt#f56260b5"] = {
+            repo = {
+                branch = "master",
+                commit = "4926ec06715e271bbab50f726a168fe9da8dd79c",
+                url = "https://github.com/xmake-io/xmake-repo.git"
+            },
+            version = "3.3.0"
+        },
+        ["cpp-mcp 2026.07.15#f56260b5"] = {
+            version = "2026.07.15"
+        },
+        ["mo2-uibase 2.5.2#f56260b5"] = {
+            repo = {
+                commit = "64b85b8c64a78ce2402495d12e6af22eb11af103",
+                url = "https://github.com/gabriel-andreescu/ModOrganizerPluginKit.git"
+            },
+            version = "2.5.2"
+        },
+        ["mo2-uibase 2.5.3beta12#f56260b5"] = {
+            repo = {
+                commit = "64b85b8c64a78ce2402495d12e6af22eb11af103",
+                url = "https://github.com/gabriel-andreescu/ModOrganizerPluginKit.git"
+            },
+            version = "2.5.3beta12"
+        },
+        ["qt6base 6.7.1#f56260b5"] = {
+            repo = {
+                branch = "master",
+                commit = "4926ec06715e271bbab50f726a168fe9da8dd79c",
+                url = "https://github.com/xmake-io/xmake-repo.git"
+            },
+            version = "6.7.1"
+        }
+    }
+}
