@@ -155,6 +155,7 @@ unit_test("ExtensionTests", { "QtCore" }, {
 })
 unit_test("QtAdapterTests", { "QtCore" }, { "tests/qt_adapter.cpp", "include/DevBenchAPI.cpp" })
 unit_test("LogTailTests", { "QtCore" }, { "tests/log_tail.cpp", "src/Logs/Tail.cpp" })
+unit_test("StaleRecordTests", { "QtCore" }, { "tests/stale_records.cpp", "src/Transport/StaleRecords.cpp" })
 unit_test("SsimTests", { "QtCore", "QtGui" }, { "tests/ssim.cpp", "src/Capture/Ssim.cpp" })
 unit_test("CaptureTests", { "QtCore", "QtGui" }, {
     "tests/capture.cpp",

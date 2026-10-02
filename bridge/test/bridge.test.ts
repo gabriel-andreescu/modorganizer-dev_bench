@@ -39,7 +39,8 @@ test("one MCP session survives offline startup, host exit and a new host session
       install: root,
       instance: "Fixture",
       session,
-      pid: 777,
+      // Discovery only probes records whose PID is a running process.
+      pid: process.pid,
       port: 0,
       exe: path.join(root, "ModOrganizer.exe"),
     };
