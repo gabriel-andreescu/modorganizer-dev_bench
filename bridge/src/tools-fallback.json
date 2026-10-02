@@ -369,7 +369,7 @@
     },
     {
       "name": "plugins",
-      "description": "Read the entire plugin order including disabled plugins, masters, origin and flags, and enable plugins or change ordering.",
+      "description": "Read the entire plugin order including disabled plugins, masters, origin and flags, and enable plugins or change ordering. forced plugins cannot be enabled or disabled. Changes return after MO2 saves the profile's plugin list.",
       "readOnly": false,
       "inputSchema": {
         "type": "object",

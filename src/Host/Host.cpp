@@ -6,7 +6,7 @@
 #include "FileActions.h"
 #include "Json.h"
 #include "Logs/Actions.h"
-#include "PluginActions.h"
+#include "Plugins/Actions.h"
 #include "Profiles/Actions.h"
 #include "Scenario.h"
 #include "Settings/Actions.h"
@@ -107,7 +107,6 @@ std::map<std::string, ToolRegistry::Handler> Host::MainThreadHandlers() {
         {"logs", [](const Json& a_args) { return Logs(a_args); }},
         {"ui", [this](const Json& a_args) { return _ui.Invoke(a_args); }},
         {"mods", [this](const Json& a_args) { return _mods.Invoke(a_args); }},
-        {"plugins", [this](const Json& a_args) { return Plugins(_organizer, a_args); }},
         {"install", [this](const Json& a_args) { return _installation.Invoke(a_args); }},
         {"dialogs", [this](const Json& a_args) { return _dialogs.Invoke(a_args); }},
         {"profiles", [this](const Json& a_args) { return Profiles(_organizer, _profileManager, a_args); }},
@@ -144,6 +143,9 @@ ToolRegistry::Handler Host::DirectHandler(const std::string& a_name) {
     }
     if (a_name == "capture") {
         return [this](const Json& a_args) { return _capture.Invoke(a_args); };
+    }
+    if (a_name == "plugins") {
+        return [this](const Json& a_args) { return Plugins(_organizer, _main, a_args); };
     }
     return {};
 }

@@ -2,6 +2,7 @@
 #include "Json.h"
 #include <QObject>
 #include <atomic>
+#include <chrono>
 #include <deque>
 #include <functional>
 #include <mutex>
@@ -12,6 +13,7 @@ class MainThread : public QObject {
 public:
     explicit MainThread(QObject* a_parent);
     Json Run(std::function<Json()> a_work);
+    void AwaitTimer(std::chrono::milliseconds a_delay);
     Json Health() const;
     void Stop();
 

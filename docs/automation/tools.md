@@ -458,7 +458,8 @@ Actions: `inspect`, `list`, `directory`, `hide`, `hideFiles`, `unhide`,
 ## plugins
 
 Read the entire plugin order including disabled plugins, masters, origin and
-flags, and enable plugins or change ordering.
+flags, and enable plugins or change ordering. forced plugins cannot be enabled
+or disabled. Changes return after MO2 saves the profile's plugin list.
 
 Actions: `list`, `setEnabled`, `setPriority`, `setLoadOrder`.
 

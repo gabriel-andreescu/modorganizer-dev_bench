@@ -90,10 +90,13 @@ existing mod assignments.
 
 `list` returns every plugin, including disabled entries. `priority` is the
 position in the full list. `loadOrder` is MO2's active index, with `-1` for
-inactive entries. `setEnabled` takes `name` and `enabled`, and `setPriority`
-takes `name` and `priority`. `setLoadOrder` takes `names`, containing the entire
-current plugin set exactly once. MO2 still applies game rules such as master
-ordering and forced-enabled plugins, so inspect the returned state.
+inactive entries. `forced` marks plugins whose state MO2 forces, such as the
+game's own masters. `setEnabled` takes `name` and `enabled`, and fails for
+forced plugins. `setPriority` takes `name` and `priority`.
+`setLoadOrder` takes `names`, containing the entire current plugin set exactly
+once. MO2 still applies game rules such as master ordering, so inspect the
+returned state. Changes return after MO2 saves the profile's plugin list, so a
+following refresh keeps them.
 
 ## Installers
 

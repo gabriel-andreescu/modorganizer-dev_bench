@@ -197,7 +197,7 @@ namespace {
         const Json strings = {{"type", "array"}, {"items", text}};
         return Tool(
             "plugins",
-            "Read the entire plugin order including disabled plugins, masters, origin and flags, and enable plugins or change ordering.",
+            "Read the entire plugin order including disabled plugins, masters, origin and flags, and enable plugins or change ordering. forced plugins cannot be enabled or disabled. Changes return after MO2 saves the profile's plugin list.",
             {"list", "setEnabled", "setPriority", "setLoadOrder"},
             {
                 {"name", Described(text, "setEnabled/setPriority: plugin filename")},
