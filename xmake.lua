@@ -151,7 +151,7 @@ unit_test("ExtensionTests", { "QtCore" }, {
         "MOPK_VERSION_PATCH=" .. patch,
     },
 })
-unit_test("QtAdapterTests", { "QtCore" }, { "tests/qt_adapter.cpp" })
+unit_test("QtAdapterTests", { "QtCore" }, { "tests/qt_adapter.cpp", "include/DevBenchAPI.cpp" })
 unit_test("LogTailTests", { "QtCore" }, { "tests/log_tail.cpp", "src/Logs/Tail.cpp" })
 unit_test("SsimTests", { "QtCore", "QtGui" }, { "tests/ssim.cpp", "src/Capture/Ssim.cpp" })
 unit_test("CaptureTests", { "QtCore", "QtGui" }, {
