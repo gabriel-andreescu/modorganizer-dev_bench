@@ -5,7 +5,7 @@ repos:
     hooks:
       - id: eslint-bridge
         name: eslint (bridge/)
-        entry: node bridge/scripts/lint.mjs
+        entry: npm --prefix bridge run lint
         language: system
         files: ^bridge/src/
         pass_filenames: false
