@@ -10,6 +10,8 @@ add_addons("mopk 0.1.0", "xmake-luals 0.1.0")
 includes("@addon/mopk/project", "@addon/mopk/native", "@addon/xmake-luals/luals")
 includes("xmake/cpp-mcp")
 
+-- Dependencies
+
 add_requires("cpp-mcp 2026.07.15", { system = false })
 
 -- Build targets
