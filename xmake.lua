@@ -4,9 +4,9 @@ set_policy("package.requires_lock", true)
 
 local version = "0.1.0"
 
-add_repositories("mopk https://github.com/gabriel-andreescu/ModOrganizerPluginKit.git")
+add_repositories("mopk https://github.com/gabriel-andreescu/ModOrganizerPluginKit")
 add_repositories("xmake-luals https://github.com/gabriel-andreescu/xmake-luals.git")
-add_addons("mopk 0.1.0", "xmake-luals 0.1.0")
+add_addons("mopk 0.2.0", "xmake-luals 0.1.1")
 includes("@addon/mopk/project", "@addon/mopk/native", "@addon/xmake-luals/luals")
 includes("packages/*/*/xmake.lua")
 
@@ -168,7 +168,6 @@ unit_test("CaptureTests", { "QtCore", "QtGui" }, {
 })
 
 -- Packages
-
 target("dev_bench", function()
     set_version(version)
     add_rules("@addon/mopk/package", { targets = { "Plugin", "Bridge" } })
