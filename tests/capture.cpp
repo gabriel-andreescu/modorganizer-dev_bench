@@ -13,9 +13,9 @@ using Bench::Json;
 
 QImage Pattern() {
     QImage image(32, 32, QImage::Format_RGB32);
-    for (int y = 0; y < image.height(); ++y) {
-        for (int x = 0; x < image.width(); ++x) {
-            image.setPixel(x, y, ((x / 4) + (y / 4)) % 2 == 0 ? qRgb(220, 180, 40) : qRgb(20, 40, 90));
+    for (int row = 0; row < image.height(); ++row) {
+        for (int column = 0; column < image.width(); ++column) {
+            image.setPixel(column, row, ((column / 4) + (row / 4)) % 2 == 0 ? qRgb(220, 180, 40) : qRgb(20, 40, 90));
         }
     }
     return image;
@@ -30,11 +30,13 @@ void RegisterProvider(Bench::EventBus& a_events) {
             Pattern().save(QString::fromStdString(a_arguments["outputPath"].get<std::string>()), "PNG");
             a_events.Publish(
                 "capture.ready",
-                {{"requestId", a_arguments["requestId"]},
+                {
+                    {"requestId", a_arguments["requestId"]},
                     {"ok", true},
                     {"uiExcluded", true},
                     {"width", 32},
-                    {"height", 32}}
+                    {"height", 32},
+                }
             );
             return Json {{"queued", true}};
         }

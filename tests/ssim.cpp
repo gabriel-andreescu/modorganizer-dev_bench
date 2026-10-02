@@ -6,11 +6,14 @@
 #include <cmath>
 #include <cstdint>
 #include <functional>
+#include <stdexcept>
+#include <utility>
 
 namespace {
 using Bench::Ssim::ComputeSsim;
 using Bench::Ssim::CropUv;
 using Bench::Ssim::DecodeGray;
+using Bench::Ssim::GrayImage;
 using Bench::Ssim::ScoreAgainstGolden;
 
 std::uint8_t Checker(int a_x, int a_y) {
@@ -25,9 +28,10 @@ QString Write(
     const std::function<std::uint8_t(int, int)>& a_pixel
 ) {
     QImage image(a_width, a_height, QImage::Format_Grayscale8);
-    for (int y = 0; y < a_height; ++y) {
-        for (int x = 0; x < a_width; ++x) {
-            image.scanLine(y)[x] = a_pixel(x, y);
+    for (int row = 0; row < a_height; ++row) {
+        for (int column = 0; column < a_width; ++column) {
+            const auto value = a_pixel(column, row);
+            image.setPixel(column, row, qRgb(value, value, value));
         }
     }
     const auto path = QDir(a_directory.path()).filePath(a_name);
@@ -43,8 +47,16 @@ std::uint8_t HalfInverted(int a_x, int a_y) {
     return a_x >= 12 ? Inverted(a_x, a_y) : Checker(a_x, a_y);
 }
 
+GrayImage Decode(const QString& a_path) {
+    auto image = DecodeGray(a_path);
+    if (!image) {
+        throw std::runtime_error("Cannot decode " + a_path.toStdString());
+    }
+    return std::move(*image);
+}
+
 double Score(const QString& a_left, const QString& a_right) {
-    return ComputeSsim(*DecodeGray(a_left), *DecodeGray(a_right));
+    return ComputeSsim(Decode(a_left), Decode(a_right));
 }
 
 int CheckScores(const QTemporaryDir& a_directory) {
@@ -80,7 +92,7 @@ int CheckCrop(const QTemporaryDir& a_directory) {
     const auto source = Write(a_directory, "gradient.png", 10, 10, [](int a_x, int a_y) {
         return static_cast<std::uint8_t>(a_x + a_y);
     });
-    const auto right = CropUv(*DecodeGray(source), {{"x", 0.5}, {"y", 0.0}, {"w", 0.5}, {"h", 1.0}});
+    const auto right = CropUv(Decode(source), {{"x", 0.5}, {"y", 0.0}, {"w", 0.5}, {"h", 1.0}});
     return right.width == 5 && right.height == 10 && std::abs(right.px[0] - 5.0F) < 0.5F ? 0 : 6;
 }
 
@@ -110,11 +122,13 @@ int CheckGoldens(const QTemporaryDir& a_directory) {
 
     const Bench::Json regions = {
         {"threshold", 0.98},
-        {"regions",
+        {
+            "regions",
             Bench::Json::array({
                 {{"name", "left"}, {"x", 0.0}, {"y", 0.0}, {"w", 0.5}, {"h", 1.0}},
                 {{"name", "right"}, {"x", 0.5}, {"y", 0.0}, {"w", 0.5}, {"h", 1.0}, {"threshold", -1.0}},
-            })},
+            }),
+        },
     };
     const auto scored = ScoreAgainstGolden(half, checker, regions);
     if (!scored.ok
