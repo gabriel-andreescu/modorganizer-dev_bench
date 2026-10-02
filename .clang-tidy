@@ -50,7 +50,7 @@ Checks:
 
 WarningsAsErrors: '*'
 ExtraArgs: ['/Y-', '-Wno-unused-command-line-argument']
-HeaderFilterRegex: '(^|[/\\])src[/\\]'
+HeaderFilterRegex: '(^|[/\\])(src|include)[/\\]'
 FormatStyle: none
 
 CheckOptions:
