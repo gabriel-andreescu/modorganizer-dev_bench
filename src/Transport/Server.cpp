@@ -29,7 +29,7 @@ void Server::Start(int a_port) {
     config.host = "127.0.0.1";
     config.port = a_port;
     config.name = "modorganizer-dev_bench";
-    config.version = "0.1.0";
+    config.version = "0.1.1";
     config.max_sessions = 32;
     config.session_timeout = 300;
     int bound = a_port;

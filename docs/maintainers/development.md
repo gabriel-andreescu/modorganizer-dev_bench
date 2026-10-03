@@ -17,7 +17,7 @@ xmake package
 ```
 
 Each ZIP contains the build for its MO2 release, for example
-`build/dist/dev_bench/dev_bench-0.1.0-MO2-2.5.2.zip`. See MOPK's
+`build/dist/dev_bench/dev_bench-0.1.1-MO2-2.5.2.zip`. See MOPK's
 [deployment and packaging](https://github.com/gabriel-andreescu/ModOrganizerPluginKit/blob/main/docs/plugin-authors/tooling/packaging.md)
 for local deployment.
 
