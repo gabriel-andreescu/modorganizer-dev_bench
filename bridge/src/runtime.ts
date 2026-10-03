@@ -105,6 +105,16 @@ function sameIdentity(left: RuntimeIdentity, right: RuntimeIdentity): boolean {
   );
 }
 
+function processRunning(pid: number): boolean {
+  try {
+    process.kill(pid, 0);
+    return true;
+  } catch (error) {
+    // EPERM names a process this user may not signal, which still runs.
+    return (error as NodeJS.ErrnoException).code === "EPERM";
+  }
+}
+
 export async function resolveInstance(target: Target): Promise<Instance> {
   let files: string[];
   try {
@@ -129,6 +139,9 @@ export async function resolveInstance(target: Target): Promise<Instance> {
           return undefined;
         }
         if (!matchesTarget(record, file, target)) return undefined;
+        // A killed MO2 leaves its record behind. Probing those ports queues requests on whichever
+        // MO2 holds them now, and enough of them make a live instance miss the timeout.
+        if (!processRunning(record.pid)) return undefined;
 
         const baseUrl = `http://127.0.0.1:${record.port}`;
         try {

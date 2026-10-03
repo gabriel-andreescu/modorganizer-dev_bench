@@ -73,8 +73,11 @@ int CheckExtensions() {
         || entry->handler({{"value", 7}})["value"] != 7) {
         return 8;
     }
-    if (api->RegisterToolExtension("capture", "fixture", kDescriptor, Replacement, nullptr)
-        || Bench::ToolExtensions::Find("capture", "fixture")->handler(Bench::Json::object())["replaced"] != true) {
+    if (api->RegisterToolExtension("capture", "fixture", kDescriptor, Replacement, nullptr)) {
+        return 9;
+    }
+    const auto replacement = Bench::ToolExtensions::Find("capture", "fixture");
+    if (!replacement || replacement->handler(Bench::Json::object())["replaced"] != true) {
         return 9;
     }
     if (!api->RegisterMenuHandler("fixture.menu", kDescriptor, Echo, nullptr)

@@ -49,8 +49,12 @@ int CheckExtension() {
     }
     return Call(respond, R"({"value":"x"})")["echo"].toString() == QStringLiteral("x") ? 0 : 12;
 }
+
+int CheckAbsentHost() {
+    return DevBenchAPI::GetDevBenchInterface001() == nullptr ? 0 : 21;
+}
 }
 
 int main() {
-    return Tests::Run([] { return Tests::First({CheckTool, CheckExtension}); });
+    return Tests::Run([] { return Tests::First({CheckTool, CheckExtension, CheckAbsentHost}); });
 }

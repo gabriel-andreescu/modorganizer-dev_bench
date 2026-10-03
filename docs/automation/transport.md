@@ -17,12 +17,15 @@ name is empty for portable installs. Health reports the same identity.
 - `GET /api/events?since=N`: event history with sequence cursor and gap
   reporting. Send `Accept: text/event-stream` for SSE.
 
-The bridge reads the records on every call and ignores those left by crashes
-when health no longer matches. It verifies the selected process's identity
-through health and supplies `X-Dev-Bench-Session`. A mismatch returns HTTP 409.
-Direct HTTP clients should send the same header when commands must stay pinned
-to a process, so a recycled port never receives a command meant for an earlier
-MO2.
+A killed MO2 leaves its record behind. The plugin removes the records of
+processes that no longer run when it starts.
+
+The bridge reads the records on every call. It skips those whose process no
+longer runs and ignores those whose health no longer matches. It verifies the
+selected process's identity through health and supplies `X-Dev-Bench-Session`. A
+mismatch returns HTTP 409. Direct HTTP clients should send the same header when
+commands must stay pinned to a process, so a recycled port never receives a
+command meant for an earlier MO2.
 
 Errors use HTTP 400 for invalid input, 404 for missing objects, 409 for
 conflicts, 503 during shutdown and 504 when the UI task deadline expires. A task

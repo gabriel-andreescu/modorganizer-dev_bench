@@ -133,7 +133,7 @@ async function main(): Promise<void> {
 
   const target = resolveTarget(args);
   const server = new Server(
-    { name: "modorganizer-dev_bench", version: "0.1.0" },
+    { name: "modorganizer-dev_bench", version: "0.1.1" },
     { capabilities: { tools: { listChanged: true } } },
   );
 

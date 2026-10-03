@@ -80,6 +80,20 @@ Json MainThread::Run(std::function<Json()> a_work) {
     return future.get();
 }
 
+void MainThread::AwaitTimer(std::chrono::milliseconds a_delay) {
+    const auto fired = std::make_shared<std::promise<void>>();
+    const auto future = fired->get_future();
+    Run([this, a_delay, fired] {
+        QTimer::singleShot(a_delay, this, [fired] { fired->set_value(); });
+        return Json();
+    });
+    while (future.wait_for(std::chrono::milliseconds(50)) != std::future_status::ready) {
+        if (_stopped) {
+            throw ToolError(503, "MO2 is shutting down");
+        }
+    }
+}
+
 Json MainThread::Health() const {
     return {{"heartbeat", _heartbeat.load()}, {"pendingTasks", _pending.load()}, {"completedTasks", _completed.load()}};
 }

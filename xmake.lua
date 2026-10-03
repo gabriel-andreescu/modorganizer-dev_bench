@@ -2,13 +2,15 @@ set_xmakever("3.1.1")
 set_project("dev_bench")
 set_policy("package.requires_lock", true)
 
-local version = "0.1.0"
+local version = "0.1.1"
 
-add_repositories("mopk https://github.com/gabriel-andreescu/ModOrganizerPluginKit.git")
+add_repositories("mopk https://github.com/gabriel-andreescu/ModOrganizerPluginKit")
 add_repositories("xmake-luals https://github.com/gabriel-andreescu/xmake-luals.git")
-add_addons("mopk 0.1.0", "xmake-luals 0.1.0")
+add_addons("mopk 0.2.0", "xmake-luals 0.1.1")
 includes("@addon/mopk/project", "@addon/mopk/native", "@addon/xmake-luals/luals")
-includes("xmake/cpp-mcp")
+includes("packages/*/*/xmake.lua")
+
+-- Dependencies
 
 add_requires("cpp-mcp 2026.07.15", { system = false })
 
@@ -151,8 +153,9 @@ unit_test("ExtensionTests", { "QtCore" }, {
         "MOPK_VERSION_PATCH=" .. patch,
     },
 })
-unit_test("QtAdapterTests", { "QtCore" }, { "tests/qt_adapter.cpp" })
+unit_test("QtAdapterTests", { "QtCore" }, { "tests/qt_adapter.cpp", "include/DevBenchAPI.cpp" })
 unit_test("LogTailTests", { "QtCore" }, { "tests/log_tail.cpp", "src/Logs/Tail.cpp" })
+unit_test("StaleRecordTests", { "QtCore" }, { "tests/stale_records.cpp", "src/Transport/StaleRecords.cpp" })
 unit_test("SsimTests", { "QtCore", "QtGui" }, { "tests/ssim.cpp", "src/Capture/Ssim.cpp" })
 unit_test("CaptureTests", { "QtCore", "QtGui" }, {
     "tests/capture.cpp",
@@ -165,7 +168,6 @@ unit_test("CaptureTests", { "QtCore", "QtGui" }, {
 })
 
 -- Packages
-
 target("dev_bench", function()
     set_version(version)
     add_rules("@addon/mopk/package", { targets = { "Plugin", "Bridge" } })

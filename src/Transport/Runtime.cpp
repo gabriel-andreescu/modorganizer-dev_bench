@@ -1,5 +1,6 @@
 #include "Transport/Runtime.h"
 #include "Json.h"
+#include "Transport/StaleRecords.h"
 #include <QCoreApplication>
 #include <QDir>
 #include <QFile>
@@ -17,6 +18,7 @@ Runtime::Runtime(const QString& a_instance, const QString& a_game) {
     const auto pid = QCoreApplication::applicationPid();
     const auto directory = qEnvironmentVariable("LOCALAPPDATA") + "/devbench/mo2/instances";
     QDir().mkpath(directory);
+    RemoveStaleRecords(directory);
     _record = directory + "/" + QString::number(pid) + ".json";
     _identity = {
         {"install", Utf8(install)},
